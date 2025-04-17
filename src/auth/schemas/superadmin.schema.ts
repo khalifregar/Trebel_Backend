@@ -3,7 +3,6 @@ import { Document } from 'mongoose';
 import { UserRole } from '../../common/enums/user-role.enum';
 
 
-
 @Schema()
 export class SuperAdmin {
   @Prop({ required: true })

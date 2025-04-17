@@ -31,14 +31,16 @@ import { Module } from '@nestjs/common';
   providers: [
     AppService,
 
-    // ✅ Register JwtAuthGuard dan RolesGuard sebagai provider eksplisit
-    JwtAuthGuard,
-    RolesGuard,
-
     {
       provide: APP_GUARD,
-      useClass: GlobalAuthGuard,
+      useClass: JwtAuthGuard,
     },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    
   ],
 })
 export class AppModule {}
+

@@ -10,18 +10,13 @@ import { AuthService } from '../service/auth.service';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../schemas/user.schema';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('auth/admin')
 export class AdminAuthController {
   constructor(private readonly authService: AuthService) {}
 
-
-  @Post('register')
-  register(@Body() body, @Request() req) {
-    return this.authService.register({ ...body, role: UserRole.ADMIN });
-  }
-  
-
+  @Public()
   @Post('login')
   login(@Body() body: { email: string; password: string }) {
     return this.authService.loginWithRole(
@@ -30,6 +25,14 @@ export class AdminAuthController {
       UserRole.ADMIN,
     );
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.SUPERADMIN)
+  @Post('register')
+  register(@Body() body, @Request() req) {
+    return this.authService.register({ ...body, role: UserRole.ADMIN });
+  }
+  
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
