@@ -22,6 +22,9 @@ export class User {
 
   @Prop({ required: true, enum: UserRole })
   role: UserRole;
+
+  @Prop() // ✅ Tambahin ini
+  lastLogoutAt?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

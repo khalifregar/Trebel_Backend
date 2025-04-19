@@ -48,4 +48,12 @@ export class UserController {
       role: req.user.role,
     };
   }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('logout')
+    @Roles(UserRole.USER)
+    logout(@Request() req) {
+    return this.authService.logout(req.user);
+  }
+
 }

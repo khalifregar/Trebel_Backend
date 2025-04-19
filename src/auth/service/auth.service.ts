@@ -6,11 +6,10 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-// Import masing-masing service dan schema
 import { UserService } from '../service/user.service';
 import { AdminService } from './admin.service';
 import { SuperadminService } from './superadmin.service';
-import { UserRole } from '../../common/enums/user-role.enum'; // misal enum-nya di folder common
+import { UserRole } from '../../common/enums/user-role.enum';
 
 @Injectable()
 export class AuthService {
@@ -35,15 +34,30 @@ export class AuthService {
     if (role === UserRole.USER) {
       const existing = await this.userService.findByEmail(email);
       if (existing) throw new BadRequestException('Email sudah digunakan');
-      newAccount = await this.userService.create({ email, name, password: hashedPassword, role });
+      newAccount = await this.userService.create({
+        email,
+        name,
+        password: hashedPassword,
+        role,
+      });
     } else if (role === UserRole.ADMIN) {
       const existing = await this.adminService.findByEmail(email);
       if (existing) throw new BadRequestException('Email sudah digunakan');
-      newAccount = await this.adminService.create({ email, name, password: hashedPassword, role });
+      newAccount = await this.adminService.create({
+        email,
+        name,
+        password: hashedPassword,
+        role,
+      });
     } else if (role === UserRole.SUPERADMIN) {
       const existing = await this.superadminService.findByEmail(email);
       if (existing) throw new BadRequestException('Email sudah digunakan');
-      newAccount = await this.superadminService.create({ email, name, password: hashedPassword, role });
+      newAccount = await this.superadminService.create({
+        email,
+        name,
+        password: hashedPassword,
+        role,
+      });
     } else {
       throw new BadRequestException('Role tidak valid');
     }
@@ -84,7 +98,6 @@ export class AuthService {
       actor: actor ?? role,
     };
 
-    // Tambahkan ID unik tergantung rolenya
     if (role === UserRole.USER) basePayload['user_id'] = account._id;
     if (role === UserRole.ADMIN) basePayload['admin_id'] = account._id;
     if (role === UserRole.SUPERADMIN) basePayload['super_id'] = account._id;
@@ -99,5 +112,15 @@ export class AuthService {
         [`${role.toLowerCase()}_id`]: account._id,
       },
     };
+  }
+
+  async logout(user: any) {
+    if (user.role !== UserRole.USER) {
+      throw new UnauthorizedException('Role tidak diizinkan untuk logout');
+    }
+
+    await this.userService.updateLastLogout(user.userId);
+
+    return { message: 'Logout berhasil' };
   }
 }

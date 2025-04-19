@@ -30,4 +30,11 @@ export class UserService {
     const result = await this.userModel.findByIdAndDelete(id);
     if (!result) throw new NotFoundException('User tidak ditemukan');
   }
+
+  async updateLastLogout(userId: string): Promise<void> {
+    await this.userModel.findByIdAndUpdate(userId, {
+      lastLogoutAt: new Date(),
+    });
+  }
+  
 }
