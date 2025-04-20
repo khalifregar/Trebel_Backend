@@ -12,6 +12,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/module/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
+import { PlaylistModule } from './playlist/playlist.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { Module } from '@nestjs/common';
     UserModule,
     AdminModule,
     SuperadminModule,
+    PlaylistModule, // ✅ Tambahkan ini
   ],
   controllers: [
     AppController,
@@ -30,7 +32,6 @@ import { Module } from '@nestjs/common';
   ],
   providers: [
     AppService,
-
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
@@ -39,8 +40,8 @@ import { Module } from '@nestjs/common';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
-    
   ],
 })
 export class AppModule {}
+
 
